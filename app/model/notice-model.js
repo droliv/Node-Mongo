@@ -4,7 +4,7 @@ const Notice = mongoose.model('Notice');
 
 exports.getAll = (callback)=>{
     Notice
-    .find({})
+    .find({}, 'title resumo autor data')
     .then(data =>{
         return callback(data);
     })
@@ -12,8 +12,17 @@ exports.getAll = (callback)=>{
         return callback(err);
     });  
 }
+exports.getOne = (id, callback) => {
+    Notice
+    .find({_id:id}, 'title resumo autor data')
+    .then(data =>{
+        return callback(data);
+    })
+    .catch(err =>{
+        return callback(err);
+    });
+}
 exports.setNotice = (noticia, result) => {
-    console.log(noticia)
     let notice = new Notice(noticia);
     notice
     .save()
@@ -24,60 +33,26 @@ exports.setNotice = (noticia, result) => {
         return result(err);
     });
 }
-
-/*
-exports.getAll = (callback)=>{
-    connect.query('SELECT * FROM noticias', function(err, rows){
-        if (err) {
-            console.log(err)
-            return err
-        }
-        console.log("Sucesso!");
-        return callback(rows)
+exports.putNotice = (noticia, id, callback) => {
+    Notice
+    .findOneAndUpdate({_id:id}, {
+        $set : noticia
     })
-}
-exports.getOne = (id, callback) => {
-    connect.query('SELECT * FROM noticias WHERE id_noticia = ?', id, (err, rows) => {
-        if (err) {
-            console.log(err)
-            return err
-        }
-        else {
-            console.log("Sucesso!");
-            return callback(rows);
-        }
+    .then(data =>{
+        return callback("success");
     })
+    .catch(err =>{
+        return callback(err);
+    });
 }
 
-exports.setNotice = (noticia) => {
-    connect.query('INSERT INTO noticias set?', noticia, (err) => {
-        if (err) {
-            console.log(err);
-        }
-        else {
-            console.log("insert success");
-        }
+exports.delete = (id, callback) => {
+    Notice
+    .findOneAndDelete({_id:id})
+    .then(x =>{
+        return callback("success");
     })
+    .catch(err =>{
+        return callback(err);
+    });
 }
-
-exports.putNotice = (noticia, id) => {
-    connect.query('UPDATE noticias set ? WHERE id_noticia = ?', [noticia, id], (err) => {
-        if (err) {
-            console.log(err);
-        }
-        else {
-            console.log("update success");
-        }
-    })
-}
-
-exports.delete = (id) => {
-    connect.query('DELETE FROM noticias WHERE id_noticia = ?', id, (err) => {
-        if (err) {
-            console.log(err);
-        }
-        else {
-            console.log("delete success");
-        }
-    })
-} */
